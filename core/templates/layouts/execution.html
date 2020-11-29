@@ -1,0 +1,247 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Execution{% endblock %}
+
+{% block stylesheets %}{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="header  pb-8 pt-5 pt-md-8">
+<div class="container">
+    <div class="row">
+      <div class="col-md-4 ">
+        <h3>Add Execution</h3>
+        <form id="addUser" action="">
+          <div class="form-group">
+             <input class="form-control" type="text" name="app" placeholder="Appname" list="appList" required>
+              <datalist id="appList">
+              <option value="Facebook">
+              <option value="WhatsApp">
+              <option value="Google">
+            </datalist>
+          </div>
+
+          <div class="form-group">
+            <input class="form-control" type="text" name="category" placeholder="Category" list="exampleList" required>
+              <datalist id="exampleList">
+                <option value="Pass">
+                <option value="Failed">
+                <option value="Not Executed">
+                <option value="No Disabled">
+                <option value="Flaky">
+                <option value="Retried">
+                <option value="Version">
+            </datalist>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="number" name="alpha1" min="0" max="100" placeholder="Alpha1" required>
+          </div>
+          <div class="form-group">
+            <input class="form-control" type="number" name="alpha2" min="0" max="100" placeholder="Alpha2" required>
+          </div>
+            <div class="form-group">
+            <input class="form-control" type="number" name="alpha3" min="0" max="100" placeholder="Alpha3" required>
+          </div>
+          <button class="btn btn-primary form-control" type="submit">SUBMIT</button>
+        </form>
+      </div>
+      <div class="col-md-8">
+        <h3>Update Execution</h3>
+        <table id="userTable" class="table table-striped">
+          <tr>
+              <th>Date</th>
+            <th>Category</th>
+            <th>Alpha1</th>
+            <th>Alpha2</th>
+              <th>Alpha3</th>
+          </tr>
+          {% if users %}
+          {% for user in users %}
+          <tr id="user-{{user.id}}">
+              <td class="userDate userData" name="date">{{user.date}}</td>
+              <td class="userApp userData" name="app">{{user.app_name}}</td>
+              <td class="userCategory userData" name="category">{{user.category}}</td>
+              <td class="userAlpha1 userData" name="alpha1">{{user.alpha1}}</td>
+              <td class="userAlpha2 userData" name="alpha2">{{user.alpha2}}</td>
+              <td class="userAlpha3 userData" name="alpha3">{{user.alpha3}}</td>
+              <td align="center">
+                  <button class="btn btn-success form-control" onClick="editUser({{user.id}})" data-toggle="modal" data-target="#myModal")>EDIT</button>
+              </td>
+              <td align="center">
+                  <button class="btn btn-danger form-control" onClick="deleteUser({{user.id}})">DELETE</button>
+              </td>
+          </tr>
+          {% endfor %}
+          {% else %}
+            No Users
+          {% endif %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          <h4 class="modal-title" id="myModalLabel">Update User</h4>
+        </div>
+        <form id="updateUser" action="">
+        <div class="modal-body">
+            <input class="form-control" id="form-id" type="hidden" name="formId"/>
+            <label for="category">Category</label>
+            <input class="form-control" id="form-category" type="text" name="formCategory"/>
+            <label for="alpha1">Alpha1</label>
+            <input class="form-control" id="form-alpha1" type="number" name="formAlpha1"/>
+            <label for="alpha2">Alpha2</label>
+            <input class="form-control" id="form-alpha2" type="number" name="formAlpha2"/>
+            <label for="alpha3">Alpha3</label>
+            <input class="form-control" id="form-alpha3" type="number" name="formAlpha3"/>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" >Save changes</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-combobox/1.1.8/js/bootstrap-combobox.min.js"></script>
+<script>
+$("form#addUser").submit(function() {
+    var appInput = $('input[name="app"]').val().trim();
+    var categoryInput = $('input[name="category"]').val().trim();
+    var alpha1Input = $('input[name="alpha1"]').val().trim();
+    var alpha2Input = $('input[name="alpha2"]').val().trim();
+    var alpha3Input = $('input[name="alpha3"]').val().trim();
+    if (categoryInput && alpha1Input && alpha2Input && alpha3Input) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "execution_create" %}',
+            data: {
+                'app' : appInput,
+                'category': categoryInput,
+                'alpha1': alpha1Input,
+                'alpha2': alpha2Input,
+                'alpha3': alpha3Input,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.user) {
+                  appendToUsrTable(data.user);
+                }
+            }
+        });
+      } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#addUser').trigger("reset");
+    return false;
+});
+function appendToUsrTable(user) {
+  $("#userTable > tbody:last-child").append(`
+        <tr id="user-${user.id}">
+            <td class="userApp" name="app">${user.app_name}</td>
+            <td class="userCategory" name="category">${user.category}</td>
+            '<td class="userAlpha1" name="alpha1">${user.alpha1}</td>
+            '<td class="userAlpha2" name="alpha2">${user.alpha2}</td>
+            '<td class="userAlpha3" name="alpha3">${user.alpha3}</td>
+            '<td align="center">
+                <button class="btn btn-success form-control" onClick="editUser(${user.id})" data-toggle="modal" data-target="#myModal")">EDIT</button>
+            </td>
+            <td align="center">
+                <button class="btn btn-danger form-control" onClick="deleteUser(${user.id})">DELETE</button>
+            </td>
+        </tr>
+    `);
+}
+$("form#updateUser").submit(function() {
+    var idInput = $('input[name="formId"]').val().trim();
+    var categoryInput = $('input[name="formCategory"]').val().trim();
+    var alpha1Input = $('input[name="formAlpha1"]').val().trim();
+    var alpha2Input = $('input[name="formAlpha2"]').val().trim();
+    var alpha3Input = $('input[name="formAlpha3"]').val().trim();
+
+    if (categoryInput && alpha1Input && alpha2Input && alpha3Input) {
+        // Create Ajax Call
+        $.ajax({
+            url: '{% url "execution_update" %}',
+            data: {
+                'id': idInput,
+                'category': categoryInput,
+                'alpha1': alpha1Input,
+                'alpha2': alpha2Input,
+                'alpha3': alpha3Input,
+            },
+            dataType: 'json',
+            success: function (data) {
+                if (data.user) {
+                  updateToUserTabel(data.user);
+                }
+            }
+        });
+       } else {
+        alert("All fields must have a valid value.");
+    }
+    $('form#updateUser').trigger("reset");
+    $('#myModal').modal('hide');
+    return false;
+});
+
+// Update Django Ajax Call
+function editUser(id) {
+  if (id) {
+    tr_id = "#user-" + id;
+    category = $(tr_id).find(".userCategory").text();
+    alpha1 = $(tr_id).find(".userAlpha1").text();
+    alpha2 = $(tr_id).find(".userAlpha2").text();
+    alpha3 = $(tr_id).find(".userAlpha3").text();
+    $('#form-id').val(id);
+    $('#form-category').val(category);
+    $('#form-alpha1').val(alpha1);
+    $('#form-alpha2').val(alpha2);
+    $('#form-alpha3').val(alpha3);
+
+  }
+}
+function updateToUserTabel(user){
+    $("#userTable #user-" + user.id).children(".userData").each(function() {
+        var attr = $(this).attr("category");
+        if (attr == "category") {
+          $(this).text(user.category);
+        } else if (attr == "alpha1") {
+          $(this).text(user.alpha1);
+        } else if (attr == "alpha2") {
+          $(this).text(user.alpha2);
+        }else {
+          $(this).text(user.alpha3);
+        }
+      });
+}
+function deleteUser(id) {
+  var action = confirm("Are you sure you want to delete this user?");
+  if (action != false) {
+    $.ajax({
+        url: '{% url "execution_delete" %}',
+        data: {
+            'id': id,
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (data.deleted) {
+              $("#userTable #user-" + id).remove();
+            }
+        }
+    });
+  }
+}
+</script>
+{% endblock javascripts %}
