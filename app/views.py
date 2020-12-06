@@ -52,6 +52,7 @@ class CrudView(ListView):
 
 class CreateCrudUser(View):
     def get(self, request):
+        date1 = request.GET.get('date', None)
         name1 = request.GET.get('name', None)
         address1 = request.GET.get('address', None)
         age1 = request.GET.get('age', None)
@@ -59,6 +60,7 @@ class CreateCrudUser(View):
         appname1 = request.GET.get('app', None)
 
         obj = Coverage.objects.create(
+            date=date1,
             category=name1,
             alpha1=address1,
             alpha2=age1,
@@ -67,7 +69,7 @@ class CreateCrudUser(View):
 
         )
 
-        user = {'id': obj.id, 'name': obj.category, 'address': obj.alpha1, 'age': obj.alpha2, 'alpha': obj.alpha3,'app_name': obj.app_name}
+        user = {'id': obj.id,'date':obj.date,'name': obj.category, 'address': obj.alpha1, 'age': obj.alpha2, 'alpha': obj.alpha3,'app_name': obj.app_name}
 
         data = {
             'user': user
@@ -121,6 +123,7 @@ class ExecutionView(ListView):
 class ExecutionCreate(View):
 
     def get(self, request):
+        date1 = request.GET.get('date', None)
         category1 = request.GET.get('category', None)
         alpha1 = request.GET.get('alpha1', None)
         alpha2 = request.GET.get('alpha2', None)
@@ -128,6 +131,7 @@ class ExecutionCreate(View):
         app1 = request.GET.get('app', None)
 
         obj = Execution.objects.create(
+            date=date1,
             category=category1,
             alpha1=alpha1,
             alpha2=alpha2,
@@ -136,7 +140,7 @@ class ExecutionCreate(View):
 
         )
 
-        user = {'id': obj.id, 'category': obj.category, 'alpha1': obj.alpha1, 'alpha2': obj.alpha2,
+        user = {'id': obj.id,'date': obj.date,'category': obj.category, 'alpha1': obj.alpha1, 'alpha2': obj.alpha2,
                 'alpha3': obj.alpha3, 'app_name' : obj.app_name}
 
         data = {

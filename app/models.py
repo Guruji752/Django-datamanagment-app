@@ -15,7 +15,7 @@ class Coverage(models.Model):
     alpha2 = models.CharField(max_length=100,blank=True, null=True,verbose_name='Alpha2')
     alpha3 = models.CharField(max_length=100,blank=True, null=True,verbose_name='Alpha3')
     app_name = models.CharField(max_length=100,blank=True,null=True,verbose_name='App name')
-    date = models.DateField(auto_now=True)
+    date = models.DateField(null=True,blank=True)
 
     class Meta:
         db_table = 'app_coverage'
@@ -29,7 +29,7 @@ class Execution(models.Model):
     alpha3 = models.CharField(max_length=100, blank=True, null=True, verbose_name='Alpha3')
     app_name = models.CharField(max_length=100,blank=True,null=True,verbose_name='App name')
 
-    date = models.DateField(auto_now=True)
+    date = models.DateField(null=True,blank=True)
 
     class Meta:
         db_table = 'app_execution'

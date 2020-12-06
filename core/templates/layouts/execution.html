@@ -12,6 +12,9 @@
       <div class="col-md-4 ">
         <h3>Add Execution</h3>
         <form id="addUser" action="">
+           <div class="form-group">
+            <input class="form-control" type="date" name="date"  placeholder="Date" required>
+          </div>
           <div class="form-group">
              <input class="form-control" type="text" name="app" placeholder="Appname" list="appList" required>
               <datalist id="appList">
@@ -118,6 +121,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-combobox/1.1.8/js/bootstrap-combobox.min.js"></script>
 <script>
 $("form#addUser").submit(function() {
+    var dateInput = $('input[name="date"]').val().trim();
     var appInput = $('input[name="app"]').val().trim();
     var categoryInput = $('input[name="category"]').val().trim();
     var alpha1Input = $('input[name="alpha1"]').val().trim();
@@ -128,6 +132,7 @@ $("form#addUser").submit(function() {
         $.ajax({
             url: '{% url "execution_create" %}',
             data: {
+                'date' : dateInput,
                 'app' : appInput,
                 'category': categoryInput,
                 'alpha1': alpha1Input,
@@ -150,6 +155,7 @@ $("form#addUser").submit(function() {
 function appendToUsrTable(user) {
   $("#userTable > tbody:last-child").append(`
         <tr id="user-${user.id}">
+            <td class="userDate" name="date">${user.date}</td>
             <td class="userApp" name="app">${user.app_name}</td>
             <td class="userCategory" name="category">${user.category}</td>
             '<td class="userAlpha1" name="alpha1">${user.alpha1}</td>
