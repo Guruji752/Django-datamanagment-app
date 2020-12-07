@@ -52,6 +52,7 @@ class CrudView(ListView):
 
 class CreateCrudUser(View):
     def get(self, request):
+        date1 = request.GET.get('date', None)
         name1 = request.GET.get('name', None)
         address1 = request.GET.get('address', None)
         age1 = request.GET.get('age', None)
@@ -59,6 +60,7 @@ class CreateCrudUser(View):
         appname1 = request.GET.get('app', None)
 
         obj = Coverage.objects.create(
+            date=date1,
             category=name1,
             alpha1=address1,
             alpha2=age1,
@@ -67,7 +69,7 @@ class CreateCrudUser(View):
 
         )
 
-        user = {'id': obj.id, 'name': obj.category, 'address': obj.alpha1, 'age': obj.alpha2, 'alpha': obj.alpha3,'app_name': obj.app_name}
+        user = {'id': obj.id,'date':obj.date,'name': obj.category, 'address': obj.alpha1, 'age': obj.alpha2, 'alpha': obj.alpha3,'app_name': obj.app_name}
 
         data = {
             'user': user
@@ -121,6 +123,7 @@ class ExecutionView(ListView):
 class ExecutionCreate(View):
 
     def get(self, request):
+        date1 = request.GET.get('date', None)
         category1 = request.GET.get('category', None)
         alpha1 = request.GET.get('alpha1', None)
         alpha2 = request.GET.get('alpha2', None)
@@ -128,6 +131,7 @@ class ExecutionCreate(View):
         app1 = request.GET.get('app', None)
 
         obj = Execution.objects.create(
+            date=date1,
             category=category1,
             alpha1=alpha1,
             alpha2=alpha2,
@@ -136,7 +140,7 @@ class ExecutionCreate(View):
 
         )
 
-        user = {'id': obj.id, 'category': obj.category, 'alpha1': obj.alpha1, 'alpha2': obj.alpha2,
+        user = {'id': obj.id,'date': obj.date,'category': obj.category, 'alpha1': obj.alpha1, 'alpha2': obj.alpha2,
                 'alpha3': obj.alpha3, 'app_name' : obj.app_name}
 
         data = {
@@ -207,25 +211,55 @@ class CreateCoverageReport(View):
         # cat1 = request.GET.get('category', 'Automatable')
         
         temp = {'alpha1': [], 'alpha2': [], 'alpha3': [], 'date': []}
+
+        temp1={'date':[]}
         if cat1 == "Coverage":
-            result = Coverage.objects.filter(date__range=[fromdate1, todate1],app_name=app1)
+            lis=["Automatable","Automated","Not Automated"]
+            for key in lis:
+                if key not in temp1.keys():
+                    temp1[key]=[]
+                result = Coverage.objects.filter(date__range=[fromdate1, todate1],app_name=app1,category=key)
+                for unit in result:
+                    if (int(unit.alpha1) & int(unit.alpha2) & int(unit.alpha3) == None):
+                        temp1[key]=0
+                    #calculation
+                    else: 
+                        calculation=int(unit.alpha1)+int(unit.alpha2)+int(unit.alpha3)
+                        temp1[key].append(calculation)
+
+
+
+
             
         elif cat1 == "Execution":
-            result = Execution.objects.filter(date__range=[fromdate1, todate1],app_name=app1)
-        for unit in result:
-            temp['alpha1'].append(unit.alpha1)
-            temp['alpha2'].append(unit.alpha2)
-            temp['alpha3'].append(unit.alpha3)
+            lis=["Pass","Failed","Not Executed"]
+            for key in lis:
+                if key not in temp1.keys():
+                    temp1[key]=[]
+                result = Execution.objects.filter(date__range=[fromdate1, todate1],app_name=app1,category=key)
+                for unit in result:
+                    if (int(unit.alpha1) & int(unit.alpha2) & int(unit.alpha3) == None):
+                        temp1[key]=0
+                    #calculation
+                    else: 
+                        calculation=int(unit.alpha1)+int(unit.alpha2)+int(unit.alpha3)
+                        temp1[key].append(calculation)
+
+            #result = Execution.objects.filter(date__range=[fromdate1, todate1],app_name=app1)
+        # for unit in result:
+        #     temp['alpha1'].append(unit.alpha1)
+        #     temp['alpha2'].append(unit.alpha2)
+        #     temp['alpha3'].append(unit.alpha3)
 
         
 
         delta = datetime.datetime.strptime(todate1, '%Y-%m-%d') - datetime.datetime.strptime(fromdate1, '%Y-%m-%d')
         for i in range(delta.days + 1):
             day = datetime.datetime.strptime(fromdate1, '%Y-%m-%d') + timedelta(days=i)
-            temp['date'].append(day.strftime("%x"))
+            temp1['date'].append(day.strftime("%x"))
 
         data = {
-            'user': temp
+            'user': temp1
         }
         print(data)
         return JsonResponse(data)
