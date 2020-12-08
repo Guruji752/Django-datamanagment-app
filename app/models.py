@@ -34,3 +34,33 @@ class Execution(models.Model):
     class Meta:
         db_table = 'app_execution'
 
+class Failed(models.Model):
+    c =  models.CharField(max_length=10,blank=True,null=True,verbose_name='C')
+    link = models.URLField(max_length=500,blank=True,null=True,verbose_name='link')
+    comment = models.CharField(max_length=100,blank=True,null=True,verbose_name='Comment')
+    high_level_resone = models.CharField(max_length=200,blank=True,null=True,verbose_name='High Level Reasone')
+    low_level_resone = models.CharField(max_length=200,blank=True,null=True,verbose_name='Low Level Reasone')
+    issue_description = models.CharField(max_length=500,blank=True,null=True, verbose_name='Issue Desciption')
+    frequency = models.CharField(max_length=100,blank=True,null=True,verbose_name='Frequency')
+    analysis = models.CharField(max_length=1000,blank=True,null=True, verbose_name='Analysis')
+    rca = models.CharField(max_length=200,blank=True,null=True,verbose_name='Rca')
+    action =models.CharField(max_length=100, blank=True, null=True,verbose_name='Action')
+
+    class Meta:
+        db_table='app_failed'
+
+
+class Disabled(models.Model):
+    c =  models.CharField(max_length=10,blank=True,null=True,verbose_name='C')
+    link = models.URLField(max_length=500,blank=True,null=True,verbose_name='link')
+    comment = models.CharField(max_length=1000,blank=True,null=True,verbose_name='Comment')
+    high_level_resone = models.CharField(max_length=200,blank=True,null=True,verbose_name='High Level Reasone')
+    low_level_resone = models.CharField(max_length=200,blank=True,null=True,verbose_name='Low Level Reasone')
+    issue_description = models.CharField(max_length=500,blank=True,null=True, verbose_name='Issue Desciption')
+    frequency = models.CharField(max_length=100,blank=True,null=True,verbose_name='Frequency')
+    analysis = models.CharField(max_length=1000,blank=True,null=True, verbose_name='Analysis')
+    rca = models.CharField(max_length=200,blank=True,null=True,verbose_name='Rca')
+    action =models.CharField(max_length=100, blank=True, null=True,verbose_name='Action')
+
+    class Meta:
+        db_table='app_disabled'

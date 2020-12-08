@@ -15,6 +15,9 @@ from .models import Coverage, Execution
 from django.views.generic import View, TemplateView
 from django.http import JsonResponse
 from django.db.models import Count, Q
+from .forms import *
+from django.contrib import messages
+
 
 
 @login_required(login_url="/login/")
@@ -204,11 +207,6 @@ class CreateCoverageReport(View):
         todate1 = retrive_data['todate']
         cat1 = retrive_data['category']
         app1 = retrive_data['app']
-
-
-        # fromdate1 = request.GET.get('fromdate', '2020-11-22')
-        # todate1 = request.GET.get('todate', '2020-11-26')
-        # cat1 = request.GET.get('category', 'Automatable')
         
         temp = {'alpha1': [], 'alpha2': [], 'alpha3': [], 'date': []}
 
@@ -245,11 +243,6 @@ class CreateCoverageReport(View):
                         calculation=int(unit.alpha1)+int(unit.alpha2)+int(unit.alpha3)
                         temp1[key].append(calculation)
 
-            #result = Execution.objects.filter(date__range=[fromdate1, todate1],app_name=app1)
-        # for unit in result:
-        #     temp['alpha1'].append(unit.alpha1)
-        #     temp['alpha2'].append(unit.alpha2)
-        #     temp['alpha3'].append(unit.alpha3)
 
         
 
@@ -263,3 +256,57 @@ class CreateCoverageReport(View):
         }
         print(data)
         return JsonResponse(data)
+
+
+############################################ Failed ###############################################################
+
+class CreateFailedDataEntry(View):
+    template_name = 'layouts/failed_form.html'
+
+
+    def get(self, request, id=None):
+        form = FailedDataEntryForm()
+        context={
+            'form': form
+        }
+
+        return render(request,self.template_name,context)
+
+    def post(self, request,id=None):
+        form = FailedDataEntryForm(request.POST)
+        if request.method == 'POST':
+            if form.is_valid():
+                form.save()
+                messages.add_message(request, messages.SUCCESS, "Data is Save SuccessFully.")
+                return redirect('failed_input')
+            else:
+                messages.add_message(request, messages.SUCCESS, "Something went wrong.")
+                return redirect('failed_input')
+
+
+
+####################################### Disabled ############################################################3
+
+class CreateDisabledDataEntry(View):
+    template_name = 'layouts/disabled_input.html'
+
+
+    def get(self, request, id=None):
+        form = DisabledDataEntryForm()
+        context={
+            'form': form
+        }
+
+        return render(request,self.template_name,context)
+
+    def post(self, request,id=None):
+        form = DisabledDataEntryForm(request.POST)
+        if request.method == 'POST':
+            if form.is_valid():
+                form.save()
+                messages.add_message(request, messages.SUCCESS, "Data is Save SuccessFully.")
+                return redirect('disabled_input')
+            else:
+                messages.add_message(request, messages.SUCCESS, "Something went wrong.")
+                return redirect('disabled_input')
+

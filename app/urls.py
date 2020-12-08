@@ -32,6 +32,11 @@ urlpatterns = [
     path('coverage/report/', views.CoverageReportView.as_view(), name='coverage_report_view'),
     path('coverage/report/plot/', views.CreateCoverageReport.as_view(), name='coverage_report_plot'),
 
+    #The Failed
+    path('failed/', views.CreateFailedDataEntry.as_view(), name='failed_input'),
+    path('disabled/', views.CreateDisabledDataEntry.as_view(), name='disabled_input'),
+
+
 
 
 

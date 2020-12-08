@@ -38,6 +38,7 @@
               <i class="ni ni-single-02"></i>
               <span>My profile</span>
             </a>
+            </a>
             <div class="dropdown-divider"></div>
             <a href="{% url 'logout' %}" class="dropdown-item">
               <i class="ni ni-user-run"></i>
@@ -86,18 +87,18 @@
               <i class="ni ni-bold-right"></i> Execution
             </a>
           </li>
-          {% comment %}
+          
           <li class="nav-item">
-            <a class="nav-link " href="/maps.html">
+            <a class="nav-link " href="{% url 'failed_input' %}">
               <i class="ni ni-bold-right"></i>Failed
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link " href="/profile.html">
+            <a class="nav-link " href="{% url 'disabled_input' %}">
               <i class="ni ni-bold-right"></i>Disabled
             </a>
           </li>
-          {% endcomment %}
+         
           <li class="nav-item">
             <a class="nav-link " href="{% url 'coverage_report_view' %}">
               <i class="ni ni-bold-right"></i>Report
